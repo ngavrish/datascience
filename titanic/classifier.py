@@ -28,5 +28,28 @@ test_data = pd.read_csv("./datasets/test.csv")
 
 all_data = pd.concat([train_data, test_data])
 
-print("===== survived by class and sex")
-print(train_data.groupby(["Pclass", "Sex"])["Survived"].value_counts(normalize=True))
+
+class DataDigest:
+
+    def __init__(self):
+        self.ages = None
+        self.fares = None
+        self.titles = None
+        self.cabins = None
+        self.families = None
+        self.tickets = None
+
+
+def get_title(name):
+    if pd.isnull(name):
+        return "Null"
+
+    title_search = re.search(' ([A-Za-z]+)\.', name)
+
+# print("===== survived by class and sex")
+# print(train_data.groupby(["Pclass", "Sex"])["Survived"].value_counts(normalize=True))
+
+describe_fields = ["Age", "Fare", "Pclass", "SibSp", "Parch"]
+
+print("==== train males:")
+print(train_data[train_data["Sex"] == "male"][describe_fields].describe())
