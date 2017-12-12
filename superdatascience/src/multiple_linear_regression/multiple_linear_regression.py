@@ -36,3 +36,7 @@ regressor = LinearRegression()
 regressor.fit(X_train, y_train)
 
 y_pred = regressor.predict(X_test)
+
+import statsmodels.formula.api as sm
+
+X = np.append(np.ones((50, 1)).astype(int), X, axis=1)
