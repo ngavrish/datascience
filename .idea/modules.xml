@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/datascience.iml" filepath="$PROJECT_DIR$/.idea/datascience.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../arrival/qa-automation/.idea/qa-automation.iml" filepath="$PROJECT_DIR$/../arrival/qa-automation/.idea/qa-automation.iml" />
       <module fileurl="file://$USER_HOME$/PycharmProjects/qa-automation/.idea/qa-automation.iml" filepath="$USER_HOME$/PycharmProjects/qa-automation/.idea/qa-automation.iml" />
     </modules>
   </component>
