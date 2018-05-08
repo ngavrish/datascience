@@ -296,7 +296,7 @@ print("Accuracy (sgd): {}/{}".format(scores.mean(), scores.std()))
 
 alg_svm = SVC(C=1.0)
 scores = cross_val_score(alg_svm, train_data_scaled, train_data_munged["Survived"], cv=cv, n_jobs=-1)
-print("Accuracy (svm): {}/{}".format(scores.mean(), scores.std()))
+print("Accuracy (support_vector_machines): {}/{}".format(scores.mean(), scores.std()))
 
 # -----------------------------------------------------------------------------
 # naive bayes
