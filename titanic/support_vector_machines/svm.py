@@ -7,19 +7,18 @@ import pandas as pd
 
 # Importing the dataset
 train_dataset = pd.read_csv('./datasets/train.csv').fillna(0)
-X_train = train_dataset.iloc[:, [2, 4, 5]].values
+X_train = train_dataset.iloc[:, [0, 2, 4, 5]].values
 y_train = train_dataset.iloc[:, 1].values
 
 
 test_dataset = pd.read_csv('./datasets/test.csv').fillna(0)
-X_test = test_dataset.iloc[:, [1, 3, 4]].values
-y_test = test_dataset.iloc[:, 1].values
+X_test = test_dataset.iloc[:, [0, 1, 3, 4]].values
 
 # taking care of missing data
 from sklearn_pandas.categorical_imputer import CategoricalImputer
 imputer = CategoricalImputer(missing_values='NaN')
 imputer.fit(X_train, y_train)
-imputer.fit(X_test, y_test)
+imputer.fit(X_test)
 
 
 # Categorical data fix
