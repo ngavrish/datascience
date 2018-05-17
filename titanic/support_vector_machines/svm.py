@@ -24,8 +24,8 @@ imputer.fit(X_test)
 # Categorical data fix
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_sex = LabelEncoder()
-X_train[:, 1] = labelencoder_sex.fit_transform(X_train[:, 1])
-X_test[:, 1] = labelencoder_sex.fit_transform(X_test[:, 1])
+X_train[:, 2] = labelencoder_sex.fit_transform(X_train[:, 2])
+X_test[:, 2] = labelencoder_sex.fit_transform(X_test[:, 2])
 df = pd.DataFrame(X_train)
 
 onehotencoder = OneHotEncoder(categorical_features=[1])
@@ -49,7 +49,13 @@ classifier.fit(X_train, y_train)
 # Predicting the Test set results
 y_pred = classifier.predict(X_test)
 
+print(str())
 print(str(y_pred))
+submission = pd.DataFrame({
+        "PassengerId": test_dataset["PassengerId"],
+        "Survived": y_pred
+    })
+submission.to_csv('./submission.csv', index=False)
 # Making the Confusion Matrix
 # from sklearn.metrics import confusion_matrix
 #
