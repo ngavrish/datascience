@@ -1,26 +1,36 @@
 # Support Vector Machine (SVM)
 
 # Importing the libraries
+from datetime import datetime
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 # Importing the dataset
-train_dataset = pd.read_csv('./datasets/train.csv').fillna(0)
-# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5
-X_train = train_dataset.iloc[:, [0, 2, 4, 5, 6, 7, 9]].values
-y_train = train_dataset.iloc[:, 1].values
-
-
-test_dataset = pd.read_csv('./datasets/test.csv').fillna(0)
-X_test = test_dataset.iloc[:, [0, 1, 3, 4, 5, 6, 8]].values
+train_dataset = pd.read_csv('./datasets/train.csv')
+# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5, fare = 6, embarked = 7
+test_dataset = pd.read_csv('./datasets/test.csv')
 
 # taking care of missing data
 from sklearn_pandas.categorical_imputer import CategoricalImputer
 imputer = CategoricalImputer(missing_values='NaN')
-imputer.fit(X_train, y_train)
-imputer.fit(X_test)
+imputer.fit(train_dataset["Sex"])
+imputer.fit(test_dataset["Sex"])
+imputer.fit(train_dataset["Embarked"])
+imputer.fit(test_dataset["Embarked"])
 
+from sklearn.preprocessing import Imputer
+imputer = Imputer(missing_values='NaN', strategy='most_frequent')
+imputer.fit(train_dataset["PassengerId"])
+imputer.fit(test_dataset)
+
+
+X_test = test_dataset.iloc[:, [0, 1, 3, 4, 5, 6, 8, 10]].values
+X_train = train_dataset.iloc[:, [0, 2, 4, 5, 6, 7, 9, 11]].values
+y_train = train_dataset.iloc[:, 1].values
+
+print(str(X_train[7]))
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
 sc = StandardScaler()
@@ -31,18 +41,25 @@ X_test[:, [3]] = sc.transform(X_test[:, [3]])
 # fare scaling
 X_train[:, [6]] = maxAbsScaler.fit_transform(X_train[:, [6]])
 X_test[:, [6]] = maxAbsScaler.transform(X_test[:, [6]])
-print(str(X_test[:, [6]]))
+# siblings scaling
 
 # Categorical data fix
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-labelencoder_sex = LabelEncoder()
-X_train[:, 2] = labelencoder_sex.fit_transform(X_train[:, 2])
-X_test[:, 2] = labelencoder_sex.fit_transform(X_test[:, 2])
+labelencoder= LabelEncoder()
+X_train[:, 2] = labelencoder.fit_transform(X_train[:, 2])
+X_test[:, 2] = labelencoder.fit_transform(X_test[:, 2])
+
+print("Before label encoding = " + str(X_train[:, 7]))
+X_train[:, 7] = labelencoder.fit_transform(X_train[:, 7])
+X_test[:, 7] = labelencoder.fit_transform(X_test[:, 7])
+
+
 df = pd.DataFrame(X_train)
 
-onehotencoder = OneHotEncoder(categorical_features=[1])
-X_train = onehotencoder.fit_transform(X_train).toarray()
-X_test = onehotencoder.fit_transform(X_test).toarray()
+onehotencoder = OneHotEncoder(categorical_features=[1, 7])
+
+X_train = onehotencoder.fit_transform(X_train[:, :]).toarray()
+X_test = onehotencoder.fit_transform(X_test[:, :]).toarray()
 
 
 # Fitting SVM to the Training set
@@ -59,7 +76,7 @@ submission = pd.DataFrame({
         "PassengerId": test_dataset["PassengerId"],
         "Survived": y_pred
     })
-submission.to_csv('./submission.csv', index=False)
+submission.to_csv(f"./submission_1.csv", index=False)
 # Making the Confusion Matrix
 # from sklearn.metrics import confusion_matrix
 #
