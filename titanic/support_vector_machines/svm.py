@@ -22,14 +22,15 @@ imputer.fit(X_train, y_train)
 imputer.fit(X_test)
 
 # Feature Scaling
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MaxAbsScaler
 sc = StandardScaler()
+maxAbsScaler = MaxAbsScaler()
 # age scaling
 X_train[:, [3]] = sc.fit_transform(X_train[:, [3]])
 X_test[:, [3]] = sc.transform(X_test[:, [3]])
 # fare scaling
-X_train[:, [6]] = sc.fit_transform(X_train[:, [6]])
-X_test[:, [6]] = sc.transform(X_test[:, [6]])
+X_train[:, [6]] = maxAbsScaler.fit_transform(X_train[:, [6]])
+X_test[:, [6]] = maxAbsScaler.transform(X_test[:, [6]])
 print(str(X_test[:, [6]]))
 
 # Categorical data fix
