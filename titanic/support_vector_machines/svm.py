@@ -7,12 +7,13 @@ import pandas as pd
 
 # Importing the dataset
 train_dataset = pd.read_csv('./datasets/train.csv').fillna(0)
-X_train = train_dataset.iloc[:, [0, 2, 4, 5]].values
+# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5
+X_train = train_dataset.iloc[:, [0, 2, 4, 5, 6, 7, 9]].values
 y_train = train_dataset.iloc[:, 1].values
 
 
 test_dataset = pd.read_csv('./datasets/test.csv').fillna(0)
-X_test = test_dataset.iloc[:, [0, 1, 3, 4]].values
+X_test = test_dataset.iloc[:, [0, 1, 3, 4, 5, 6, 8]].values
 
 # taking care of missing data
 from sklearn_pandas.categorical_imputer import CategoricalImputer
@@ -20,6 +21,16 @@ imputer = CategoricalImputer(missing_values='NaN')
 imputer.fit(X_train, y_train)
 imputer.fit(X_test)
 
+# Feature Scaling
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+# age scaling
+X_train[:, [3]] = sc.fit_transform(X_train[:, [3]])
+X_test[:, [3]] = sc.transform(X_test[:, [3]])
+# fare scaling
+X_train[:, [6]] = sc.fit_transform(X_train[:, [6]])
+X_test[:, [6]] = sc.transform(X_test[:, [6]])
+print(str(X_test[:, [6]]))
 
 # Categorical data fix
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -33,13 +44,6 @@ X_train = onehotencoder.fit_transform(X_train).toarray()
 X_test = onehotencoder.fit_transform(X_test).toarray()
 
 
-# Feature Scaling
-from sklearn.preprocessing import StandardScaler
-
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-
 # Fitting SVM to the Training set
 from sklearn.svm import SVC
 #
@@ -49,7 +53,6 @@ classifier.fit(X_train, y_train)
 # Predicting the Test set results
 y_pred = classifier.predict(X_test)
 
-print(str())
 print(str(y_pred))
 submission = pd.DataFrame({
         "PassengerId": test_dataset["PassengerId"],
