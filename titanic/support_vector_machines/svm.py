@@ -1,10 +1,6 @@
 # Support Vector Machine (SVM)
 
 # Importing the libraries
-from datetime import datetime
-
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 
 # Importing the dataset
@@ -22,7 +18,7 @@ imputer.fit(test_dataset["Embarked"])
 
 from sklearn.preprocessing import Imputer
 imputer = Imputer(missing_values='NaN', strategy='most_frequent')
-imputer.fit(train_dataset["PassengerId"])
+imputer.fit(train_dataset["PassengerId"].reshape(-1,1))
 imputer.fit(test_dataset)
 
 
