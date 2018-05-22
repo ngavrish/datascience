@@ -38,6 +38,8 @@ test_imputer = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
 test_imputer.fit(X_test[:, 3:6])
 X_test[:, 3:6] = test_imputer.transform(X_test[:, 3:6])
 
+
+
 print("\n\nBEFORE SCALING  = " + str(X_test[:, 6]) + "\n\n")
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
