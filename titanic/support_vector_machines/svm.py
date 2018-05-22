@@ -1,32 +1,42 @@
 # Support Vector Machine (SVM)
 
 # Importing the libraries
+import numpy
 import pandas as pd
 
 # Importing the dataset
 train_dataset = pd.read_csv('./datasets/train.csv')
-# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5, fare = 6, embarked = 7
 test_dataset = pd.read_csv('./datasets/test.csv')
-
-# taking care of missing data
-from sklearn_pandas.categorical_imputer import CategoricalImputer
-imputer = CategoricalImputer(missing_values='NaN')
-imputer.fit(train_dataset["Sex"])
-imputer.fit(test_dataset["Sex"])
-imputer.fit(train_dataset["Embarked"])
-imputer.fit(test_dataset["Embarked"])
-
-from sklearn.preprocessing import Imputer
-imputer = Imputer(missing_values='NaN', strategy='most_frequent')
-imputer.fit(train_dataset["PassengerId"].reshape(-1,1))
-imputer.fit(test_dataset)
-
-
+# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5, fare = 6, embarked = 7
 X_test = test_dataset.iloc[:, [0, 1, 3, 4, 5, 6, 8, 10]].values
 X_train = train_dataset.iloc[:, [0, 2, 4, 5, 6, 7, 9, 11]].values
 y_train = train_dataset.iloc[:, 1].values
 
-print(str(X_train[7]))
+# taking care of missing data
+from sklearn_pandas.categorical_imputer import CategoricalImputer
+categorical_imputer = CategoricalImputer(missing_values='NaN')
+
+categorical_imputer.fit(X_train[:, 2])
+X_train[:, 2] = categorical_imputer.transform(X_train[:, 2])
+
+categorical_imputer.fit(X_test[:, 2])
+X_test[:, 2] = categorical_imputer.transform(X_test[:, 2])
+
+categorical_imputer.fit(X_train[:, 7])
+X_train[:, 7] = categorical_imputer.transform(X_train[:, 7])
+
+categorical_imputer.fit(X_test[:, 7])
+X_test[:, 7] = categorical_imputer.transform(X_test[:, 7])
+
+
+from sklearn.preprocessing import Imputer
+imputer_calc = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
+imputer_calc.fit(X_train[:, 3:6])
+imputer_calc.fit(X_test[:, 3:6])
+X_test[:, 3:6] = imputer_calc.transform(X_test[:, 3:6])
+X_train[:, 3:6] = imputer_calc.transform(X_train[:, 3:6])
+
+
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
 sc = StandardScaler()
