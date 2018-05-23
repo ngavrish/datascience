@@ -7,75 +7,73 @@ import pandas as pd
 # Importing the dataset
 train_dataset = pd.read_csv('./datasets/train.csv')
 test_dataset = pd.read_csv('./datasets/test.csv')
-# passanger id = 0, class = 1, sex  = 2, age = 3, siblings = 4, parch = 5, fare = 6, embarked = 7
-X_test = test_dataset.iloc[:, [0, 1, 3, 4, 5, 6, 8, 10]].values
-X_train = train_dataset.iloc[:, [0, 2, 4, 5, 6, 7, 9, 11]].values
+# class = 0, sex  = 1, age = 2, siblings = 3, parch = 4, fare = 5, embarked = 6
+X_test = test_dataset.iloc[:, [1, 3, 4, 5, 6, 8, 10]].values
+X_train = train_dataset.iloc[:, [2, 4, 5, 6, 7, 9, 11]].values
 y_train = train_dataset.iloc[:, 1].values
 
 # taking care of missing data
 from sklearn_pandas.categorical_imputer import CategoricalImputer
 categorical_imputer = CategoricalImputer(missing_values='NaN')
 
-categorical_imputer.fit(X_train[:, 2])
-X_train[:, 2] = categorical_imputer.transform(X_train[:, 2])
+categorical_imputer.fit(X_train[:, 1])
+X_train[:, 1] = categorical_imputer.transform(X_train[:, 1])
 
-categorical_imputer.fit(X_test[:, 2])
-X_test[:, 2] = categorical_imputer.transform(X_test[:, 2])
+categorical_imputer.fit(X_test[:, 1])
+X_test[:, 1] = categorical_imputer.transform(X_test[:, 1])
 
-categorical_imputer.fit(X_train[:, 7])
-X_train[:, 7] = categorical_imputer.transform(X_train[:, 7])
+categorical_imputer.fit(X_train[:, 6])
+X_train[:, 6] = categorical_imputer.transform(X_train[:, 6])
 
-categorical_imputer.fit(X_test[:, 7])
-X_test[:, 7] = categorical_imputer.transform(X_test[:, 7])
+categorical_imputer.fit(X_test[:, 6])
+X_test[:, 6] = categorical_imputer.transform(X_test[:, 6])
 
 
 from sklearn.preprocessing import Imputer
-train_imputer = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
-train_imputer.fit(X_train[:, 3:6])
-X_train[:, 3:6] = train_imputer.transform(X_train[:, 3:6])
-
-test_imputer = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
-test_imputer.fit(X_test[:, 3:6])
-X_test[:, 3:6] = test_imputer.transform(X_test[:, 3:6])
+train_imputer = Imputer(missing_values='NaN', strategy='mean', axis=0)
+train_imputer.fit(X_train[:, 2:6])
+X_train[:, 2:6] = train_imputer.transform(X_train[:, 2:6])
 
 
+test_imputer = Imputer(missing_values='NaN', strategy='mean', axis=0)
+test_imputer.fit(X_test[:, 2:6])
+X_test[:, 2:6] = test_imputer.transform(X_test[:, 2:6])
 
-print("\n\nBEFORE SCALING  = " + str(X_test[:, 6]) + "\n\n")
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
 sc = StandardScaler()
 maxAbsScaler = MaxAbsScaler()
 # age scaling
-X_train[:, [3]] = sc.fit_transform(X_train[:, [3]])
-X_test[:, [3]] = sc.transform(X_test[:, [3]])
+X_train[:, [2]] = sc.fit_transform(X_train[:, [2]])
+X_test[:, [2]] = sc.transform(X_test[:, [2]])
 # fare scaling
-X_train[:, [6]] = maxAbsScaler.fit_transform(X_train[:, [6]])
-X_test[:, [6]] = maxAbsScaler.transform(X_test[:, [6]])
+X_train[:, [5]] = maxAbsScaler.fit_transform(X_train[:, [5]])
+X_test[:, [5]] = maxAbsScaler.transform(X_test[:, [5]])
 # siblings scaling
 
 # Categorical data fix
+df_before_categorical = pd.DataFrame(X_train)
+
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder= LabelEncoder()
-X_train[:, 2] = labelencoder.fit_transform(X_train[:, 2])
-X_test[:, 2] = labelencoder.fit_transform(X_test[:, 2])
+X_train[:, 1] = labelencoder.fit_transform(X_train[:, 1])
+X_test[:, 1] = labelencoder.fit_transform(X_test[:, 1])
 
-print("Before label encoding = " + str(X_train[:, 7]))
-X_train[:, 7] = labelencoder.fit_transform(X_train[:, 7])
-X_test[:, 7] = labelencoder.fit_transform(X_test[:, 7])
+X_train[:, 6] = labelencoder.fit_transform(X_train[:, 6])
+X_test[:, 6] = labelencoder.fit_transform(X_test[:, 6])
 
 
 df = pd.DataFrame(X_train)
 
-onehotencoder = OneHotEncoder(categorical_features=[1, 7])
+onehotencoder = OneHotEncoder(categorical_features=[0, 6])
 
 X_train = onehotencoder.fit_transform(X_train[:, :]).toarray()
 X_test = onehotencoder.fit_transform(X_test[:, :]).toarray()
 
-
 # Fitting SVM to the Training set
 from sklearn.svm import SVC
 #
-classifier = SVC(kernel='linear', random_state=0)
+classifier = SVC(kernel='rbf', random_state=0)
 classifier.fit(X_train, y_train)
 
 # Predicting the Test set results
@@ -86,7 +84,7 @@ submission = pd.DataFrame({
         "PassengerId": test_dataset["PassengerId"],
         "Survived": y_pred
     })
-submission.to_csv(f"./submission_1.csv", index=False)
+submission.to_csv(f"./submission.csv", index=False)
 # Making the Confusion Matrix
 # from sklearn.metrics import confusion_matrix
 #
