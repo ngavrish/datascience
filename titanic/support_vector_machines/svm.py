@@ -5,6 +5,11 @@ import numpy
 import pandas as pd
 
 # Importing the dataset
+import xgboost
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn_pandas import GridSearchCV
+
 train_dataset = pd.read_csv('./datasets/train.csv')
 test_dataset = pd.read_csv('./datasets/test.csv')
 
@@ -78,9 +83,23 @@ onehotencoder = OneHotEncoder(categorical_features=[0, 6])
 #X_test = onehotencoder.fit_transform(X_test[:, :]).toarray()
 
 # Fitting SVM to the Training set
-from sklearn.svm import SVC
+# from sklearn.svm import SVC
+# #
+# classifier = SVC(kernel='rbf', random_state=0)
+# classifier.fit(X_train, y_train)
 #
-classifier = SVC(kernel='rbf', random_state=0)
+# # Predicting the Test set results
+# y_pred = classifier.predict(X_test)
+
+
+# Fitting XGBoost to the Training set
+# from xgboost import XGBClassifier
+# classifier = XGBClassifier()
+# classifier.fit(X_train, y_train)
+
+# Fitting Random Forest Classification to the Training set
+from sklearn.tree import DecisionTreeClassifier
+classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
 classifier.fit(X_train, y_train)
 
 # Predicting the Test set results
