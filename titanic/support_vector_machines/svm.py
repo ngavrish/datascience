@@ -7,9 +7,15 @@ import pandas as pd
 # Importing the dataset
 train_dataset = pd.read_csv('./datasets/train.csv')
 test_dataset = pd.read_csv('./datasets/test.csv')
-# class = 0, sex  = 1, age = 2, siblings = 3, parch = 4, fare = 5, embarked = 6
-X_test = test_dataset.iloc[:, [1, 3, 4, 5, 6, 8]].values
-X_train = train_dataset.iloc[:, [2, 4, 5, 6, 7, 9]].values
+
+siblings_amount = test_dataset["Parch"] + test_dataset["SibSp"]
+test_dataset["single"] = siblings_amount.apply(lambda r: 1 if r == 0 else 0)
+siblings_amount = train_dataset["Parch"] + train_dataset["SibSp"]
+train_dataset["single"] = siblings_amount.apply(lambda r: 1 if r == 0 else 0)
+
+# class = 0, sex  = 1, age = 2, siblings = 3, parch = 4, fare = 5, deck = 6
+X_test = test_dataset.iloc[:, [1, 3, 4, 5, 6, 8, 11]].values
+X_train = train_dataset.iloc[:, [2, 4, 5, 6, 7, 9, 12]].values
 y_train = train_dataset.iloc[:, 1].values
 
 # taking care of missing data
@@ -22,22 +28,22 @@ X_train[:, 1] = categorical_imputer.transform(X_train[:, 1])
 categorical_imputer.fit(X_test[:, 1])
 X_test[:, 1] = categorical_imputer.transform(X_test[:, 1])
 
-categorical_imputer.fit(X_train[:, 5])
-X_train[:, 5] = categorical_imputer.transform(X_train[:, 5])
+categorical_imputer.fit(X_train[:, 6])
+X_train[:, 6] = categorical_imputer.transform(X_train[:, 6])
 
-categorical_imputer.fit(X_test[:, 5])
-X_test[:, 5] = categorical_imputer.transform(X_test[:, 5])
+categorical_imputer.fit(X_test[:, 6])
+X_test[:, 6] = categorical_imputer.transform(X_test[:, 6])
 
 
 from sklearn.preprocessing import Imputer
 train_imputer = Imputer(missing_values='NaN', strategy='mean', axis=0)
-train_imputer.fit(X_train[:, 2:5])
-X_train[:, 2:5] = train_imputer.transform(X_train[:, 2:5])
+train_imputer.fit(X_train[:, 2:6])
+X_train[:, 2:6] = train_imputer.transform(X_train[:, 2:6])
 
 
 test_imputer = Imputer(missing_values='NaN', strategy='mean', axis=0)
-test_imputer.fit(X_test[:, 2:5])
-X_test[:, 2:5] = test_imputer.transform(X_test[:, 2:5])
+test_imputer.fit(X_test[:, 2:6])
+X_test[:, 2:6] = test_imputer.transform(X_test[:, 2:6])
 
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler, MaxAbsScaler
@@ -59,13 +65,14 @@ labelencoder= LabelEncoder()
 X_train[:, 1] = labelencoder.fit_transform(X_train[:, 1])
 X_test[:, 1] = labelencoder.fit_transform(X_test[:, 1])
 
-#X_train[:, 5] = labelencoder.fit_transform(X_train[:, 5])
-#X_test[:, 5] = labelencoder.fit_transform(X_test[:, 5])
+# deck categorization
+# X_train[:, 6] = labelencoder.fit_transform(X_train[:, 6])
+# X_test[:, 6] = labelencoder.fit_transform(X_test[:, 6])
 
 
 df = pd.DataFrame(X_train)
 
-onehotencoder = OneHotEncoder(categorical_features=[0, 5])
+onehotencoder = OneHotEncoder(categorical_features=[0, 6])
 
 #X_train = onehotencoder.fit_transform(X_train[:, :]).toarray()
 #X_test = onehotencoder.fit_transform(X_test[:, :]).toarray()
